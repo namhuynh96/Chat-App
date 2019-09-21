@@ -4,7 +4,7 @@ const path = require('path')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/user')
+const { addUser, removeUser, getUser, getUsersInRoom, getAvailableRooms } = require('./utils/user')
 
 const app = express()
 const server = http.createServer(app)
@@ -19,6 +19,10 @@ io.on('connection', (socket) => {
     // socket.emit, io.emit, socket.broadcast.emit
     // io.to().emit, socket.broadcast.to().emit
     console.log('new websocket connection')
+
+    socket.on('availableRooms', callback => {
+        callback(getAvailableRooms())
+    })
 
     socket.on('join', (options, callback) => {
         const { user, error } = addUser({ id: socket.id, ...options })
